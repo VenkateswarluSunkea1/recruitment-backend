@@ -1,14 +1,14 @@
 # candidates/serializers.py
 
 from rest_framework import serializers
-from .models import Candidate, Job
+from .models import Resume, Job
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = '__all__'
 
-class CandidateSerializer(serializers.ModelSerializer):
+class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Candidate
+        model = Resume
         fields = '__all__'

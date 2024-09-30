@@ -15,3 +15,12 @@ urlpatterns = [
     path('candidates/', CandidateListCreateView.as_view(), name='candidate-list-create'),  # List and create candidates
     path('candidates/<int:pk>/', CandidateDetailView.as_view(), name='candidate-detail'),  # Retrieve, update, or delete a specific candidate
 ]
+# candidates/urls.py
+
+from django.urls import path
+from .views import ResumeUploadView,getAllResumes
+
+urlpatterns = [
+    path('upload/', ResumeUploadView.as_view(), name='resume-upload'),
+    path('resumes/', getAllResumes, name='resume-list'), 
+]

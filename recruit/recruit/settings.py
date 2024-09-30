@@ -54,6 +54,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 ROOT_URLCONF = "recruit.urls"
 
 TEMPLATES = [
@@ -82,10 +84,10 @@ DATABASES = {
     "default": {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME':  'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': 5432,
+		'USER': 'postgres',
+		'PASSWORD': 'postgres',
+		'HOST': 'localhost',
+		'PORT': 5432,
     }
 }
 
