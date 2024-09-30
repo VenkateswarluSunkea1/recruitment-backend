@@ -1,0 +1,28 @@
+# Python bytecode
+*.py[cod]
+__pycache__/
+*.so
+
+# Virtual environment
+venv/
+.venv/
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.sqlite3
+media/
+static/
+staticfiles/
+.env
+
+# Django Migrations
+*/migrations/*
+
+# IDE files (optional)
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
