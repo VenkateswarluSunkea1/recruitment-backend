@@ -11,6 +11,7 @@ from spacy.tokens import DocBin
 import pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 
 # Load the pre-trained spaCy model
 nlp = spacy.load("en_core_web_sm")
@@ -87,18 +88,50 @@ class ResumeUploadView(generics.CreateAPIView):
             return ', '.join(skills_found)
         return "Skills not found"
     
+# @api_view(['GET'])
+# def getAllResumes(request):
+#     print('enteressdfsdfsdf')
+#     try:
+#         # Fetch all resumes from the database
+#         resumes = Resume.objects.all()
+
+#         # Serialize the data
+#         serializer = ResumeSerializer(resumes, many=True)
+#         print(serializer.data,'sdfbshfbshdfsdf')
+#         # Return the serialized data with a success message
+#         return Response({"success": "Resumes retrieved successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+#     except Exception as e:
+#         error_message = f"API error: {e}"
+#         return Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ResumePagination(PageNumberPagination):
+    page_size = 10  # Default number of items per page
+    page_size_query_param = 'limit'  # Parameter for the client to specify page size
+    max_page_size = 100  # Maximum limit of items per page
+
 @api_view(['GET'])
 def getAllResumes(request):
-    print('enteressdfsdfsdf')
+    print('API endpoint hit')
     try:
-        # Fetch all resumes from the database
-        resumes = Resume.objects.all()
+        page = int(request.query_params.get('page', 1))
+        limit = int(request.query_params.get('limit', 10))
+        offset = (page - 1) * limit
+        
+        # Fetch resumes with pagination
+        resumes = Resume.objects.all()[offset:offset + limit]
 
         # Serialize the data
         serializer = ResumeSerializer(resumes, many=True)
-        print(serializer.data,'sdfbshfbshdfsdf')
-        # Return the serialized data with a success message
-        return Response({"success": "Resumes retrieved successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+        # Count total resumes for pagination info
+        total_count = Resume.objects.count()
+
+        # Return the serialized data with total count
+        return Response({
+            'total_count': total_count,
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
 
     except Exception as e:
         error_message = f"API error: {e}"
