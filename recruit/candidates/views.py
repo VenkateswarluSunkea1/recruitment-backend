@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
-from .models import Resume
-from .serializers import ResumeSerializer
+from .models import Resume,Job
+from .serializers import ResumeSerializer, JobSerializer
 import docx
 import PyPDF2
 import io
@@ -135,3 +135,20 @@ def get(self, request, job_id):
         return Response(candidates_data)
     except Job.DoesNotExist:
         return Response({"error": "Job not found"}, status=404)
+
+# List all jobs and create a new job
+class JobListCreateView(generics.ListCreateAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+# Retrieve, update, or delete a specific job
+class JobDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+# List all candidates and create a new candidate
+class CandidateListCreateView(generics.ListCreateAPIView):
+    queryset = Resume.objects.all()
+    serializer_class = ResumeSerializer
+# Retrieve, update, or delete a specific candidate
+class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Resume.objects.all()
+    serializer_class = ResumeSerializer
