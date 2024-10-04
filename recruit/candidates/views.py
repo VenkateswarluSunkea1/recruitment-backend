@@ -12,6 +12,7 @@ import pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+import json
 
 # Load the pre-trained spaCy model
 nlp = spacy.load("en_core_web_sm")
@@ -112,21 +113,52 @@ class ResumePagination(PageNumberPagination):
 
 @api_view(['GET'])
 def getAllResumes(request):
-    print('API endpoint hit')
+    print('API endpoint hit',request.query_params.get('skill set'))
     try:
         page = int(request.query_params.get('page', 1))
         limit = int(request.query_params.get('limit', 10))
         offset = (page - 1) * limit
         
         # Fetch resumes with pagination
-        resumes = Resume.objects.all()[offset:offset + limit]
+        # resumes = Resume.objects.all()[offset:offset + limit]
+        resumes = Resume.objects.all()
 
+        # Filtering logic based on active filters
+        skill_set_filter = request.query_params.get('skill set')
+        print(skill_set_filter,'skill_set_filterasdasd')
+        if skill_set_filter:
+            skill_set_filter = json.loads(skill_set_filter)
+            option = skill_set_filter.get('option')
+            print('entered2')
+            value = skill_set_filter.get('value')
+            print(option,value,'optionassd')
+            if option == "contains":
+                resumes = resumes.filter(skills__icontains=value)
+            elif option == "not_contains":
+                resumes = resumes.exclude(skills__icontains=value)
+            elif option == "is":
+                resumes = resumes.filter(skills=value)
+            elif option == "is_not":
+                resumes = resumes.exclude(skills=value)
+            elif option == "starts_with":
+                resumes = resumes.filter(skills__startswith=value)
+            elif option == "ends_with":
+                resumes = resumes.filter(skills__endswith=value)
+            elif option == "is_empty":
+                resumes = resumes.filter(skills__isnull=True)  # Assuming skills is nullable
+            elif option == "is_not_empty":
+                resumes = resumes.exclude(skills__isnull=True)
+        
+        total_count = len(resumes)
+        # Paginate the results
+        resumes = resumes[offset:offset + limit]
+        print(resumes,'rsusfnsdfsdf')
         # Serialize the data
         serializer = ResumeSerializer(resumes, many=True)
 
         # Count total resumes for pagination info
-        total_count = Resume.objects.count()
-
+        # total_count = Resume.objects.count()
+        print(total_count,'total_countdbfsdf')
         # Return the serialized data with total count
         return Response({
             'total_count': total_count,
