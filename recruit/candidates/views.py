@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 import json
+from django.shortcuts import get_object_or_404
 
 # Load the pre-trained spaCy model
 nlp = spacy.load("en_core_web_sm")
@@ -217,3 +218,22 @@ class CandidateListCreateView(generics.ListCreateAPIView):
 class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resume.objects.all()
     serializer_class = ResumeSerializer
+
+@api_view(['POST'])
+def associate_resumes_with_job(request):
+    # Parse the request body to get the job_id and selected resume_ids
+    data = json.loads(request.body)
+    job_id = data.get('job_id')
+    resume_ids = data.get('resume_ids', [])
+
+    # Get the Job instance by id
+    job = get_object_or_404(Job, id=job_id)
+
+    # Get the Resume instances by ids and associate them with the job
+    resumes = Resume.objects.filter(id__in=resume_ids)
+
+    # Add job to each resume
+    for resume in resumes:
+        resume.jobs.add(job)
+    print(resumes,'resumessdfsfsfw')
+    return Response({"message": "Resumes associated successfully"}, status=200)

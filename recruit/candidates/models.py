@@ -45,7 +45,7 @@ class Resume(models.Model):
     experience_in_years=models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
     current_employer=models.TextField(null=True, blank=True)
     current_job_title=models.TextField(null=True, blank=True)
-
+    jobs = models.ManyToManyField(Job, related_name='resumes', blank=True)
 
     def __str__(self):
         return self.name

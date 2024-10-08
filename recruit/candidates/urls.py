@@ -5,7 +5,8 @@ from .views import (
     CandidateListCreateView,
     CandidateDetailView,
     ResumeUploadView,
-    getAllResumes
+    getAllResumes,
+    associate_resumes_with_job
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     # Candidate URLs
     path('candidates/', CandidateListCreateView.as_view(), name='candidate-list-create'),  # List and create candidates
     path('candidates/<int:pk>/', CandidateDetailView.as_view(), name='candidate-detail'),  # Retrieve, update, or delete a specific candidate
+    path('associate-resumes/', associate_resumes_with_job, name='associate_resumes_with_job'),
 ]
