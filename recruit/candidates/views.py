@@ -237,3 +237,56 @@ def associate_resumes_with_job(request):
         resume.jobs.add(job)
     print(resumes,'resumessdfsfsfw')
     return Response({"message": "Resumes associated successfully"}, status=200)
+
+@api_view(['GET'])
+def get_jobs_by_resume(request, resume_id):
+    # Get the Resume instance by id
+    resume = get_object_or_404(Resume, id=resume_id)
+
+    # Get all jobs associated with the resume
+    jobs = resume.jobs.all()
+
+    # Serialize the job data
+    serializer = JobSerializer(jobs, many=True)
+
+    return Response(serializer.data, status=200)
+
+# @api_view(['GET'])
+# def job_list_view(request):
+#     job_ids = request.data.get('job_ids', [])
+#     if not job_ids:
+#         return Response({"error": "No job_ids provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+#     try:
+#         # Fetch jobs that match the job_ids list
+#         jobs = Job.objects.filter(id__in=job_ids)
+#         if not jobs.exists():
+#             return Response({"error": "No jobs found for the provided IDs"}, status=status.HTTP_404_NOT_FOUND)
+
+#         # Serialize the jobs data
+#         serializer = JobSerializer(jobs, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     except Exception as e:
+#         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def job_list_view(request):
+    print(request.query_params.getlist('job_ids[]'),'requestadhfad')
+    job_ids = request.query_params.getlist('job_ids[]')  # Use 'job_ids[]'
+    print("Retrieved job_ids:", job_ids)
+    if not job_ids:
+        return Response({"error": "No job_ids provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Convert job_ids to integers if needed
+        job_ids = list(map(int, job_ids))
+        # Fetch jobs that match the job_ids list
+        jobs = Job.objects.filter(id__in=job_ids)
+        if not jobs.exists():
+            return Response({"error": "No jobs found for the provided IDs"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the jobs data
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

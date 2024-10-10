@@ -36,9 +36,9 @@ class Job(models.Model):
         return self.title
 
 class Resume(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=225)
     email = models.EmailField()
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=225)
     skills = models.TextField()
     file = models.FileField(upload_to='resumes/')
     secondary_email = models.CharField(max_length=255, null=True, blank=True, default=None)
